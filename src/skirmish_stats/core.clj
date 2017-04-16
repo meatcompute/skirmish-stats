@@ -1,5 +1,6 @@
 (ns skirmish-stats.core
-  (:require [compojure.core :refer [routes GET POST]]
+  (:require [clojure.walk :as walk]
+            [compojure.core :refer [routes GET POST]]
             [compojure.route :as route]
             [hiccup.core :as hiccup]
             [org.httpkit.server :as server]
@@ -15,7 +16,10 @@
 
 #_(defqueries "db.sql" {:connection db-spec})
 
-(defn generate-url []
+(defn generate-url
+  "Returns a CREST URL to pull valid test data.
+  Restructures a bunch of constants for now, can easily be paramaterized."
+  []
   (let [protocol "https://"
         domain "crest-tq.eveonline.com/"
         path "killmails/"
@@ -60,17 +64,19 @@
       (:body res)
       {:error status})))
 
-(defn parse
+(defn json->edn
   "Convert JSON body to clj data."
   [body]
-  (cheshire/parse-string body))
+  (-> body
+      cheshire/parse-string
+      walk/keywordize-keys))
 
 (defn store [killmail]
-  (pr (keys killmail)))
+  (pr killmail))
 
 (defn new-killmail [req]
   (let [url (get-in req [:params :url])]
-    (-> url scrape parse store)))
+    (-> url scrape json->edn store)))
 
 (defn ring-routes
   "Takes a client request and routes it to a handler."
