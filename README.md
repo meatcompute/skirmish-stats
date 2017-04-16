@@ -1,10 +1,10 @@
 # skirmish-stats
 
-A Clojure library designed to ... well, that part is up to you.
+Analytics tools for competitive EVE Online players.
 
 ## Usage
 
-FIXME
+Still a fresh project, not intended for use.
 
 ## License
 
