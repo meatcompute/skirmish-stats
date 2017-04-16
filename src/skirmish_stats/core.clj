@@ -18,7 +18,9 @@
   []
   [:form
    {:method "POST" :action "/killmails"}
-   [:input {:type "hidden" :id "__anti-forgery-token" :value ()}]
+   [:input {:type "hidden"
+            :id "__anti-forgery-token"
+            :value ()}]
    [:label
     {:name "url"}
     "CREST Link"]
