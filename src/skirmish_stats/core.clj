@@ -2,8 +2,9 @@
   (:require [compojure.core :refer [routes GET POST]]
             [compojure.route :as route]
             [hiccup.core :as hiccup]
-            [org.httpkit.server :as httpserver]
-            [org.httpkit.client :as httpclient]
+            [org.httpkit.server :as server]
+            [org.httpkit.client :as client]
+            [cheshire.core :as cheshire]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.defaults :as defaults]))
 
@@ -53,7 +54,7 @@
 (defn scrape
   "GETs the contents of the url, FIXME should handle errors better"
   [url]
-  (let [res (httpclient/get url)
+  (let [res (client/get url)
         {:keys [status] :as res} @res]
     (if (= 200 status)
       (:body res)
@@ -62,10 +63,10 @@
 (defn parse
   "Convert JSON body to clj data."
   [body]
-  (TODO-cheshire-parse body))
+  (cheshire/parse-string body))
 
-(defn store [json]
-  (pr json))
+(defn store [killmail]
+  (pr (keys killmail)))
 
 (defn new-killmail [req]
   (let [url (get-in req [:params :url])]
@@ -106,5 +107,5 @@
 
 (defn start-http []
   (let [port 10069
-        stop-fn (httpserver/run-server (ring-handler) {:port port})]
+        stop-fn (server/run-server (ring-handler) {:port port})]
     stop-fn))
