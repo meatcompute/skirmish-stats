@@ -2,7 +2,8 @@
   (:require [compojure.core :refer [routes GET POST]]
             [compojure.route :as route]
             [hiccup.core :as hiccup]
-            [org.httpkit.server :as http-kit]
+            [org.httpkit.server :as httpserver]
+            [org.httpkit.client :as httpclient]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.defaults :as defaults]))
 
@@ -13,14 +14,19 @@
 
 #_(defqueries "db.sql" {:connection db-spec})
 
+(defn generate-url []
+  (let [protocol "https://"
+        domain "crest-tq.eveonline.com/"
+        path "killmails/"
+        ;; FIXME: Two ids here, what do they mean?
+        ids "61403482/a53510250504dcc6d43c9b32298b11b9b98c2d51/"]
+    (str protocol domain path ids)))
+
 (defn killmail-submit-form
   "Provides the user with an input box to submit a killmail url."
   []
   [:form
    {:method "POST" :action "/killmails"}
-   [:input {:type "hidden"
-            :id "__anti-forgery-token"
-            :value ()}]
    [:label
     {:name "url"}
     "CREST Link"]
@@ -44,14 +50,26 @@
     [:h1 "Skirmish Stats"]
     (killmail-submit-form)]))
 
-(defn new-killmail
-  [req]
+(defn scrape
+  "GETs the contents of the url, FIXME should handle errors better"
+  [url]
+  (let [res (httpclient/get url)
+        {:keys [status] :as res} @res]
+    (if (= 200 status)
+      (:body res)
+      {:error status})))
+
+(defn parse
+  "Convert JSON body to clj data."
+  [body]
+  (TODO-cheshire-parse body))
+
+(defn store [json]
+  (pr json))
+
+(defn new-killmail [req]
   (let [url (get-in req [:params :url])]
-    (pr url)
-    ;; FIXME Turn this psuedocode into donezo code
-    #_(-> url
-          scrape
-          store-json)))
+    (-> url scrape parse store)))
 
 (defn ring-routes
   "Takes a client request and routes it to a handler."
@@ -88,5 +106,5 @@
 
 (defn start-http []
   (let [port 10069
-        stop-fn (http-kit/run-server (ring-handler) {:port port})]
+        stop-fn (httpserver/run-server (ring-handler) {:port port})]
     stop-fn))
