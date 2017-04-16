@@ -48,8 +48,8 @@
     (pr url)
     ;; FIXME Turn this psuedocode into donezo code
     #_(-> url
-        scrape
-        store-json)))
+          scrape
+          store-json)))
 
 (defn ring-routes
   "Takes a client request and routes it to a handler."
@@ -68,10 +68,11 @@
    :session {:flash true
              :cookie-attrs {:http-only true}}
    :security {:anti-forgery false
-              :xss-protection {:enable? true, :mode :block}
+              :xss-protection {:enable? true
+                               :mode :block}
               :frame-options :sameorigin
               :content-type-options :nosniff}
-   :static {:resources "public"},
+   :static {:resources "public"}
    :responses {:not-modified-responses true
                :absolute-redirects true
                :content-types true
