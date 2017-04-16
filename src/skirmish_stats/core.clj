@@ -3,7 +3,9 @@
             [compojure.route :as route]
             [hiccup.core :as hiccup]
             [org.httpkit.server :as http-kit]
-            [ring.middleware.defaults :as defaults]))
+            [ring.middleware.defaults :as defaults]
+            [byte-streams :refer [convert]]
+            ))
 
 #_(def db-spec {:classname "org.postgresql.Driver"
               :subprotocol "postgresql"
@@ -12,7 +14,9 @@
 
 #_(defqueries "db.sql" {:connection db-spec})
 
-(defn killmail-submit-form []
+(defn killmail-submit-form
+  "Provides the user with an input box to submit a killmail url."
+  []
   [:form
    {:method "POST" :action "/killmails"}
    [:label
@@ -20,8 +24,9 @@
     "CREST Link"]
    [:input
     {:name "url"
+     :id "url"
      :type "url"
-     :placeholder "example.com/"}]])
+     :placeholder "http://example.com/"}]])
 
 (defn index [ring-req]
   (hiccup/html
@@ -38,16 +43,16 @@
     (killmail-submit-form)]))
 
 (defn new-killmail
-  [ring-req]
-  (let [{:keys [body]} ring-req]
-    (pr ring-req)))
+  [{:keys [body]}]
+  (let [url (convert body String)]
+    ))
 
 (defn ring-routes
   "Takes a client request and routes it to a handler."
   []
   (routes
-   (GET "/" ring-req (index ring-req))
-   (POST "/killmails" ring-req (new-killmail ring-req))
+   (GET "/" [] index)
+   (POST "/killmails" [] new-killmail)
    (route/not-found "<h1>Route not found, 404 :C</h1>")))
 
 (defn ring-handler

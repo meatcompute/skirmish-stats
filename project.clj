@@ -10,5 +10,7 @@
                  [http-kit "2.2.0"]
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.2.0"]
+                 [com.taoensso/timbre "4.3.1"]
                  [compojure "1.5.0"]
+                 [byte-streams "0.2.2"]
                  [mount "0.1.11"]])
