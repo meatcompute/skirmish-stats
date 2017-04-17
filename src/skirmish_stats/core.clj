@@ -1,5 +1,6 @@
 (ns skirmish-stats.core
-  (:require [clojure.walk :as walk]
+  (:require [skirmish-stats.structure :as s]
+            [clojure.walk :as walk]
             [compojure.core :refer [routes GET POST]]
             [compojure.route :as route]
             [hiccup.core :as hiccup]
@@ -70,6 +71,9 @@
   (-> body
       cheshire/parse-string
       walk/keywordize-keys))
+
+(defn test-structure [url]
+  (-> url scrape json->edn s/structure))
 
 (defn store [killmail]
   (pr killmail))
