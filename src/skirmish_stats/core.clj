@@ -66,7 +66,8 @@
       {:error status})))
 
 (defn json->edn
-  "Convert JSON body to clj data."
+  "Convert JSON body to clj data.
+  TODO rename keys to be snake case instead of the mess of data CREST is throwing."
   [body]
   (-> body
       cheshire/parse-string

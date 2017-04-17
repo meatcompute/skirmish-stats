@@ -1,4 +1,6 @@
-(ns skirmish-stats.schema)
+(ns skirmish-stats.schema
+  "Defines schemas for every EVE object present in a killmail. Collections are plural and are
+  always homogenous vectors of EVE objects.")
 
 (defn ship-type []
   {:id_str java.lang.String

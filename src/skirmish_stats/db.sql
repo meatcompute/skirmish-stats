@@ -1,5 +1,5 @@
 -- name: insert-killmail
--- Stores killmail json
+-- Stores killmail
 INSERT :killmail
 INTO killmails
 -- FIXME
