@@ -43,13 +43,13 @@
 (defn item []
   {:singleton java.lang.Integer
    :itemType (item-type)
-   :quantityDropped_str java.lang.String
    :flag java.lang.Integer
+   :flag_str java.lang.String
    :singleton_str java.lang.String
    :quantityDropped java.lang.Integer
-   :flag_str java.lang.String
-   :quantityDestroyed_str java.lang.String
-   :quantityDestroyed java.lang.Integer})
+   :quantityDropped_str java.lang.String
+   :quantityDestroyed java.lang.Integer
+   :quantityDestroyed_str java.lang.String})
 
 (defn position []
   {:y java.lang.Double
@@ -93,3 +93,20 @@
    :attackerCount java.lang.Integer
    :attackerCount_str java.lang.String
    :killTime java.lang.String})
+
+(defn comp []
+  {:id java.lang.Integer
+   :name java.lang.String
+   :ship-types [(ship-type)]})
+
+(defn match []
+  {:id java.lang.Integer
+   :name java.lang.String
+   :datetime java.lang.String
+   :characters [(character)]})
+
+(defn team []
+  {:id java.lang.Integer
+   :name java.lang.String
+   :characters [(character)]
+   :matches [(match)]})
