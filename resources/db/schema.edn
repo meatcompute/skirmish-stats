@@ -14,4 +14,9 @@
   :db/valueType :db.type/instant
   :db/cardinality :db.cardinality/one
   :db/doc "A killmail's time"}
+
+ {:db/ident :killmail/url
+  :db/valueType :db.type/url
+  :db/cardinality :db.cardinality/one
+  :db/doc "A killmail's CREST url"}
  ]
