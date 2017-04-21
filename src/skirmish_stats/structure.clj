@@ -12,7 +12,7 @@
         true (list 'U a b)))
 
 (defn structure
-  "Gets the types within a nested maps and vectors"
+  "Takes a collection and produces a spec"
   [x]
   (cond (map? x)
         (into {} (map (fn [[k v]] [k (structure v)]) x))

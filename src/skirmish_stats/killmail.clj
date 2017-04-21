@@ -2,10 +2,10 @@
   (:require [skirmish-stats.character :as c]
             [skirmish-stats.item :as i]
             [skirmish-stats.attacker :as a]
-            [skirmish-stats.ship :as s]
-            ))
+            [skirmish-stats.ship :as s]))
+
 (defn spec
-  "FIXME: Use this to validate inbound data"
+  "TODO Produce a clojure spec from this and use to parse and validate inbound data."
   []
   {:killID java.lang.Integer
    :attackerCount java.lang.Integer
