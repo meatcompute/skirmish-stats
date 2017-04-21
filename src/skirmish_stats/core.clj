@@ -1,8 +1,8 @@
 (ns skirmish-stats.core
   (:require [skirmish-stats.killmail :as km]
+            [skirmish-stats.db :as db]
             [clojure.core.async :refer [<!!]]
             [clojure.walk :as walk]
-            [datomic.client :as d]
             [compojure.core :refer [routes GET POST]]
             [compojure.route :as route]
             [hiccup.core :as hiccup]
@@ -11,22 +11,6 @@
             [mount.core :refer [defstate]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.defaults :as defaults]))
-
-(defstate conn
-  :start (<!! (d/connect
-               {:db-name "hello"
-                :account-id d/PRO_ACCOUNT
-                :secret "pihasfy83uhs"
-                :region "none"
-                :endpoint "localhost:8998"
-                :service "peer-server"
-                :access-key "ohiuygtfrdyfu32hjk32"})))
-
-(defstate schema
-  :start (slurp "resources/db/schema.edn"))
-
-(defn schema-load []
-  (d/transact conn {:tx-data schema}))
 
 (defn killmail-submit-form
   "Provides the user with an input box to submit a killmail url."
@@ -45,7 +29,7 @@
 (defn killmails-component
   "FIXME Maybe pull instead of query?"
   []
-  (let [kms (<!! (km/get-all conn))]
+  (let [kms (<!! (km/get-all db/conn))]
     [:ul
      (for [km kms]
        [:li (pr-str km)])]))
@@ -68,7 +52,7 @@
 (defn new-killmail [req]
   (let [url         (get-in req [:params :url])
         killmail    (km/parse url)
-        transaction (<!! (km/write conn killmail))]
+        transaction (<!! (km/write db/conn killmail))]
     (ring.util.response/redirect (get-in req [:headers "referer"]))))
 
 (defn ring-routes
