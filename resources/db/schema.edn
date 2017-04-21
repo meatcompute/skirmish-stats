@@ -1,0 +1,17 @@
+[
+ {:db/ident :killmail/id
+  :db/unique :db.unique/value
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one
+  :db/doc "A killmail's id"}
+
+ {:db/ident :killmail/attacker-count
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one
+  :db/doc "A killmail's attacker count"}
+
+ {:db/ident :killmail/time
+  :db/valueType :db.type/instant
+  :db/cardinality :db.cardinality/one
+  :db/doc "A killmail's time"}
+ ]
