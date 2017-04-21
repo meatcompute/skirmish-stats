@@ -1,36 +1,42 @@
 (ns skirmish-stats.core
   (:require [skirmish-stats.structure :as s]
             [clojure.core.async :refer [<!!]]
-            [datomic.client :as d]
             [clojure.walk :as walk]
+            [datomic.client :as d]
             [compojure.core :refer [routes GET POST]]
             [compojure.route :as route]
             [hiccup.core :as hiccup]
             [org.httpkit.server :as server]
             [org.httpkit.client :as client]
             [cheshire.core :as cheshire]
+            [mount.core :refer [defstate]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.defaults :as defaults]))
 
-(def conn (<!! (d/connect
-                {:db-name "hello"
-                 :account-id d/PRO_ACCOUNT
-                 :secret "pihasfy83uhs"
-                 :region "none"
-                 :endpoint "localhost:8998"
-                 :service "peer-server"
-                 :access-key "ohiuygtfrdyfu32hjk32"})))
+(defstate conn
+  :start (d/connect
+          {:db-name "hello"
+           :account-id d/PRO_ACCOUNT
+           :secret "pihasfy83uhs"
+           :region "none"
+           :endpoint "localhost:8998"
+           :service "peer-server"
+           :access-key "ohiuygtfrdyfu32hjk32"}))
 
-(defn schema [] (slurp "resources/db/schema.edn"))
+(defn db-schema []
+  (slurp "resources/db/schema.edn"))
 
-(def killmail-e
+(defn db-load []
+  (d/transact conn {:tx-data db-schema}))
+
+(def killmails-all
   '[:find ?e
     :where
     [?e :killmail/id]])
 
-(defn get-killmails []
+(defn get-all-killmails []
   (<!! (d/q conn
-            {:query killmail-e
+            {:query killmails-all
              :args [(d/db conn)]})))
 
 (defn generate-url
