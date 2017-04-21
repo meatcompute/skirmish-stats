@@ -1,5 +1,7 @@
 (ns skirmish-stats.core
   (:require [skirmish-stats.structure :as s]
+            [clojure.core.async :refer [<!!]]
+            [datomic.client :as d]
             [clojure.walk :as walk]
             [compojure.core :refer [routes GET POST]]
             [compojure.route :as route]
@@ -10,12 +12,24 @@
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.defaults :as defaults]))
 
-#_(def db-spec {:classname "org.postgresql.Driver"
-              :subprotocol "postgresql"
-              :subname "//localhost:5432/skirmish-stats"
-              :user "mkcp"})
+(def conn (<!! (d/connect
+                {:db-name "hello"
+                 :account-id d/PRO_ACCOUNT
+                 :secret "pihasfy83uhs"
+                 :region "none"
+                 :endpoint "localhost:8998"
+                 :service "peer-server"
+                 :access-key "ohiuygtfrdyfu32hjk32"})))
 
-#_(defqueries "db.sql" {:connection db-spec})
+(def db (d/db conn))
+
+(defn schema [] (slurp "resources/db/schema.edn"))
+
+(defn get-killmails []
+  (<!! (d/q conn
+            {:query '[:find ?e
+                      :where [?e :killmail/id]]
+             :args [db]})))
 
 (defn generate-url
   "Returns a CREST URL to pull valid test data.
@@ -76,12 +90,37 @@
 (defn test-structure [url]
   (-> url scrape json->edn s/structure))
 
-(defn store [killmail]
-  (pr killmail))
+(defn validate-time [x]
+  (let [formatter(java.text.SimpleDateFormat. "yyyy.MM.dd hh:mm:ss")
+        date (.parse formatter x)]
+    date))
 
-(defn new-killmail [req]
+(defn parse
+  [killmail]
+  (let [id             (:killID killmail)
+        attacker-count (:attackerCount killmail)
+        time           (validate-time (:killTime killmail))]
+    {:killmail/id id
+     :killmail/attacker-count attacker-count
+     :killmail/time time}))
+
+(defn write
+  [killmail]
+  (d/transact conn {:tx-data [killmail]}))
+
+(defn process
+  [url]
+  (-> url
+      scrape
+      json->edn
+      parse))
+
+(defn new-killmail
+  "TODO this should be a proper web response"
+  [req]
   (let [url (get-in req [:params :url])]
-    (-> url scrape json->edn store)))
+    (case (<!! (process url))
+      true "Success!")))
 
 (defn ring-routes
   "Takes a client request and routes it to a handler."
