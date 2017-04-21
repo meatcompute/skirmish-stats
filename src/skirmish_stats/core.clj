@@ -42,10 +42,13 @@
      :type "url"
      :placeholder "http://example.com/"}]])
 
-(defn killmails-component []
-  (let [kms (get-killmails)]
-    [:p (str kms)]
-    ))
+(defn killmails-component
+  "FIXME Maybe pull instead of query?"
+  []
+  (let [kms (<!! (km/get-all conn))]
+    [:ul
+     (for [km kms]
+       [:li (pr-str km)])]))
 
 (defn index [ring-req]
   (hiccup/html
