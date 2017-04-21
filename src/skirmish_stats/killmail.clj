@@ -4,6 +4,16 @@
             [skirmish-stats.attacker :as a]
             [skirmish-stats.ship :as s]))
 
+(defn item-spec []
+  {:singleton java.lang.Integer
+   :itemType {:href java.lang.String
+              :id java.lang.Integer
+              :name java.lang.String
+              :icon {:href java.lang.String}}
+   :flag java.lang.Integer
+   :quantityDropped java.lang.Integer
+   :quantityDestroyed java.lang.Integer})
+
 (defn spec
   "TODO Produce a clojure spec from this and use to parse and validate inbound data."
   []
