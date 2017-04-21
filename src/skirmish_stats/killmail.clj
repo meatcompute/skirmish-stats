@@ -2,6 +2,7 @@
   (:require [skirmish-stats.character :as c]
             [skirmish-stats.attacker :as a]
             [skirmish-stats.ship :as s]
+            [clojure.core.async :refer [<!!]]
             [datomic.client :as d]
             [org.httpkit.client :as client]
             [cheshire.core :as cheshire]
@@ -19,15 +20,26 @@
         id "a53510250504dcc6d43c9b32298b11b9b98c2d51/"]
     (str protocol domain path kill-id id)))
 
-(def all-query
+(def all-uris
+  '[:find ?uri
+    :where
+    [_ :killmail/uri ?uri]])
+
+(defn uris
+  [conn]
+  (d/q conn
+       {:query all-uris
+        :args [(d/db conn)]}))
+
+(def all-eids
   '[:find ?e
     :where
     [?e :killmail/id]])
 
-(defn get-all
+(defn eids
   [conn]
   (d/q conn
-       {:query all-query
+       {:query all-eids
         :args [(d/db conn)]}))
 
 (defn scrape
@@ -52,22 +64,29 @@
         date (.parse formatter x)]
     date))
 
-(defn add-namespace
-  [killmail]
+(defn validate
+  "Add spec validation"
+  [url killmail]
   (let [id             (:killID killmail)
         attacker-count (:attackerCount killmail)
-        time           (validate-time (:killTime killmail))]
+        time           (validate-time (:killTime killmail))
+        uri            (java.net.URI. url)]
     {:killmail/id id
      :killmail/attacker-count attacker-count
-     :killmail/time time}))
+     :killmail/time time
+     :killmail/uri uri}))
 
 (defn write
+  "FIXME Add error handling."
   [conn killmail]
-  (d/transact conn {:tx-data [killmail]}))
+  (let [result (<!! (d/transact conn {:tx-data [killmail]}))]
+    (println result)
+    result))
 
-(defn parse
-  [url]
-  (-> url scrape json->edn add-namespace))
+(defn parse [url]
+  (let [json (scrape url)
+        edn (json->edn json)]
+    (validate url edn)))
 
 (defn item-spec []
   {:singleton java.lang.Integer

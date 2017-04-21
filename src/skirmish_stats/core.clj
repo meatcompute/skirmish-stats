@@ -29,7 +29,7 @@
 (defn killmails-component
   "FIXME Maybe pull instead of query?"
   []
-  (let [kms (<!! (km/get-all db/conn))]
+  (let [kms (<!! (km/uris db/conn))]
     [:ul
      (for [km kms]
        [:li (pr-str km)])]))
@@ -52,7 +52,7 @@
 (defn new-killmail [req]
   (let [url         (get-in req [:params :url])
         killmail    (km/parse url)
-        transaction (<!! (km/write db/conn killmail))]
+        transaction (km/write db/conn killmail)]
     (ring.util.response/redirect (get-in req [:headers "referer"]))))
 
 (defn ring-routes
