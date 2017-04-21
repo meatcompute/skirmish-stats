@@ -1,5 +1,5 @@
 (ns skirmish-stats.core
-  (:require [skirmish-stats.structure :as s]
+  (:require [skirmish-stats.killmail :as km]
             [clojure.core.async :refer [<!!]]
             [clojure.walk :as walk]
             [datomic.client :as d]
@@ -7,49 +7,26 @@
             [compojure.route :as route]
             [hiccup.core :as hiccup]
             [org.httpkit.server :as server]
-            [org.httpkit.client :as client]
             [cheshire.core :as cheshire]
             [mount.core :refer [defstate]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.defaults :as defaults]))
 
 (defstate conn
-  :start (d/connect
-          {:db-name "hello"
-           :account-id d/PRO_ACCOUNT
-           :secret "pihasfy83uhs"
-           :region "none"
-           :endpoint "localhost:8998"
-           :service "peer-server"
-           :access-key "ohiuygtfrdyfu32hjk32"}))
+  :start (<!! (d/connect
+               {:db-name "hello"
+                :account-id d/PRO_ACCOUNT
+                :secret "pihasfy83uhs"
+                :region "none"
+                :endpoint "localhost:8998"
+                :service "peer-server"
+                :access-key "ohiuygtfrdyfu32hjk32"})))
 
-(defn db-schema []
-  (slurp "resources/db/schema.edn"))
+(defstate schema
+  :start (slurp "resources/db/schema.edn"))
 
-(defn db-load []
-  (d/transact conn {:tx-data db-schema}))
-
-(def killmails-all
-  '[:find ?e
-    :where
-    [?e :killmail/id]])
-
-(defn get-all-killmails []
-  (<!! (d/q conn
-            {:query killmails-all
-             :args [(d/db conn)]})))
-
-(defn generate-url
-  "Returns a CREST URL to pull valid test data.
-  Restructures a bunch of constants for now, can easily be paramaterized."
-  []
-  (let [protocol "https://"
-        domain "crest-tq.eveonline.com/"
-        path "killmails/"
-        ;; FIXME: Two ids here, what do they mean?
-        kill-id "61403482/"
-        id "a53510250504dcc6d43c9b32298b11b9b98c2d51/"]
-    (str protocol domain path kill-id id)))
+(defn schema-load []
+  (d/transact conn {:tx-data schema}))
 
 (defn killmail-submit-form
   "Provides the user with an input box to submit a killmail url."
@@ -82,61 +59,14 @@
             :type "text/css"}]]
    [:body
     [:h1 "Skirmish Stats"]
-    (killmail-submit-form)]))
+    (killmail-submit-form)
+    (killmails-component)]))
 
-(defn scrape
-  "GETs the contents of the url, FIXME should handle errors better"
-  [url]
-  (let [res (client/get url)
-        {:keys [status] :as res} @res]
-    (if (= 200 status)
-      (:body res)
-      {:error status})))
-
-(defn json->edn
-  "Convert JSON body to clj data.
-  TODO rename keys to be snake case instead of the mess of data CREST is throwing."
-  [body]
-  (-> body
-      cheshire/parse-string
-      walk/keywordize-keys))
-
-(defn test-structure [url]
-  (-> url scrape json->edn s/structure))
-
-(defn validate-time [x]
-  (let [formatter(java.text.SimpleDateFormat. "yyyy.MM.dd hh:mm:ss")
-        date (.parse formatter x)]
-    date))
-
-(defn parse
-  [killmail]
-  (let [id             (:killID killmail)
-        attacker-count (:attackerCount killmail)
-        time           (validate-time (:killTime killmail))]
-    {:killmail/id id
-     :killmail/attacker-count attacker-count
-     :killmail/time time}))
-
-(defn write
-  [killmail]
-  (d/transact conn {:tx-data [killmail]}))
-
-(defn process
-  [url]
-  (-> url
-      scrape
-      json->edn
-      parse
-      write))
-
-(defn new-killmail
-  "FIXME"
-  [req]
-  (let [url (get-in req [:params :url])
-        result (<!! (process url))]
-    (cond
-      (not-empty result) "Success!")))
+(defn new-killmail [req]
+  (let [url         (get-in req [:params :url])
+        killmail    (km/parse url)
+        transaction (<!! (km/write conn killmail))]
+    (ring.util.response/redirect (get-in req [:headers "referer"]))))
 
 (defn ring-routes
   "Takes a client request and routes it to a handler."
@@ -171,7 +101,10 @@
   (defaults/wrap-defaults (ring-routes)
                           (defaults-config)))
 
-(defn start-http []
-  (let [port 10069
-        stop-fn (server/run-server (ring-handler) {:port port})]
-    stop-fn))
+(defstate http
+  :start (let [port 10069
+               stop-fn (server/run-server (ring-handler) {:port port})]
+           stop-fn)
+  :stop (http))
+
+(mount.core/start)
