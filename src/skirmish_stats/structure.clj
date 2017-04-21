@@ -11,7 +11,9 @@
         ; Dunno, said the ghoul
         true (list 'U a b)))
 
-(defn structure [x]
+(defn structure
+  "Gets the types within a nested maps and vectors"
+  [x]
   (cond (map? x)
         (into {} (map (fn [[k v]] [k (structure v)]) x))
 
