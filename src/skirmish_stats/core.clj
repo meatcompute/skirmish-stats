@@ -21,15 +21,17 @@
                  :service "peer-server"
                  :access-key "ohiuygtfrdyfu32hjk32"})))
 
-(def db (d/db conn))
-
 (defn schema [] (slurp "resources/db/schema.edn"))
+
+(def killmail-e
+  '[:find ?e
+    :where
+    [?e :killmail/id]])
 
 (defn get-killmails []
   (<!! (d/q conn
-            {:query '[:find ?e
-                      :where [?e :killmail/id]]
-             :args [db]})))
+            {:query killmail-e
+             :args [(d/db conn)]})))
 
 (defn generate-url
   "Returns a CREST URL to pull valid test data.
@@ -39,8 +41,9 @@
         domain "crest-tq.eveonline.com/"
         path "killmails/"
         ;; FIXME: Two ids here, what do they mean?
-        ids "61403482/a53510250504dcc6d43c9b32298b11b9b98c2d51/"]
-    (str protocol domain path ids)))
+        kill-id "61403482/"
+        id "a53510250504dcc6d43c9b32298b11b9b98c2d51/"]
+    (str protocol domain path kill-id id)))
 
 (defn killmail-submit-form
   "Provides the user with an input box to submit a killmail url."
@@ -55,6 +58,11 @@
      :id "url"
      :type "url"
      :placeholder "http://example.com/"}]])
+
+(defn killmails-component []
+  (let [kms (get-killmails)]
+    [:p (str kms)]
+    ))
 
 (defn index [ring-req]
   (hiccup/html
@@ -113,14 +121,16 @@
   (-> url
       scrape
       json->edn
-      parse))
+      parse
+      write))
 
 (defn new-killmail
-  "TODO this should be a proper web response"
+  "FIXME"
   [req]
-  (let [url (get-in req [:params :url])]
-    (case (<!! (process url))
-      true "Success!")))
+  (let [url (get-in req [:params :url])
+        result (<!! (process url))]
+    (cond
+      (not-empty result) "Success!")))
 
 (defn ring-routes
   "Takes a client request and routes it to a handler."
