@@ -1,4 +1,5 @@
 [
+ ;; Killmail
  {:db/ident :killmail/id
   :db/unique :db.unique/value
   :db/valueType :db.type/long
@@ -23,4 +24,23 @@
  {:db/ident :killmail/damage-taken
   :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one}
+
+ {:db/ident :killmail/solar-system
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "The solar system where the kill took place."}
+
+ ;; Solar System
+ {:db/ident :solar-system/href
+  :db/valueType :db.type/uri
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :solar-system/id
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :solar-system/name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
  ]

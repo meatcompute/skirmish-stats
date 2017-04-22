@@ -20,8 +20,7 @@
   (d/transact conn {:tx-data schema}))
 
 (defn get [query]
-  (let [chan (d/q conn {:query query
-                        :args [(d/db conn)]})
+  (let [chan (d/q conn {:query query :args [(d/db conn)]})
         result (<!! chan)]
     (cond
       (vector? result) (flatten result)

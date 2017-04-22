@@ -8,6 +8,41 @@
             [cheshire.core :as cheshire]
             [clojure.walk :as walk]))
 
+(defn item-spec []
+  {:item/singleton java.lang.Integer
+   :item/type {:item-type/href java.lang.String
+               :item-type/id java.lang.Integer
+               :item-type/name java.lang.String
+               :item-type/icon {:icon/href java.lang.String}}
+   :item/flag java.lang.Integer
+   :item/quantity-dropped java.lang.Integer
+   :item/quantity-destroyed java.lang.Integer})
+
+(defn solar-system-spec []
+  {:solar-system/href java.lang.String
+   :solar-system/id java.lang.Integer
+   :solar-system/name java.lang.String})
+
+(defn spec
+  "TODO Produce a clojure spec from this and use to parse and validate inbound data."
+  []
+  {::id java.lang.Integer
+   ::attacker-count java.lang.Integer
+   ::kill-time java.lang.String
+   ::damageTaken java.lang.Integer
+   ::solar-system (solar-system-spec)
+   ::attackers [(a/spec)]
+   ::items [(item-spec)]
+   ::character (c/spec)
+   ::shipType (s/spec)
+   ::corporation {:corporation/href java.lang.String
+                  :corporation/id java.lang.Integer
+                  :corporation/name java.lang.String
+                  :corporation/icon {:href java.lang.String}}
+   ::position {:position/y java.lang.Double
+               :position/x java.lang.Double
+               :position/z java.lang.Double}})
+
 (defn generate-url
   "Returns a CREST URL to pull valid test data.
   Restructures a bunch of constants for now, can easily be paramaterized."
@@ -75,35 +110,3 @@
   (let [json (scrape url)
         edn (json->edn json)]
     (validate url edn)))
-
-(defn item-spec []
-  {:singleton java.lang.Integer
-   :itemType {:href java.lang.String
-              :id java.lang.Integer
-              :name java.lang.String
-              :icon {:href java.lang.String}}
-   :flag java.lang.Integer
-   :quantityDropped java.lang.Integer
-   :quantityDestroyed java.lang.Integer})
-
-(defn spec
-  "TODO Produce a clojure spec from this and use to parse and validate inbound data."
-  []
-  {:killID java.lang.Integer
-   :attackerCount java.lang.Integer
-   :killTime java.lang.String
-   :damageTaken java.lang.Integer
-   :solarSystem {:href java.lang.String
-                 :id java.lang.Integer
-                 :name java.lang.String}
-   :attackers [(a/spec)]
-   :items [(item-spec)]
-   :character (c/spec)
-   :shipType (s/spec)
-   :corporation {:href java.lang.String
-                 :id java.lang.Integer
-                 :name java.lang.String
-                 :icon {:href java.lang.String}}
-   :position {:y java.lang.Double
-              :x java.lang.Double
-              :z java.lang.Double}})
