@@ -23,15 +23,15 @@
    :name java.lang.String
    :icon {:href java.lang.String}})
 
-(defn attacker []
-  {:shipType (ship-type)
-   :corporation (corporation)
-   :character (character)
-   :damageDone_str java.lang.String
-   :weaponType (weapon-type)
-   :finalBlow java.lang.Boolean
-   :securityStatus java.lang.Double
-   :damageDone java.lang.Integer})
+#_(defn attacker []
+    {:shipType (ship-type)
+     :corporation (corporation)
+     :character (character)
+     :damageDone_str java.lang.String
+     :weaponType (weapon-type)
+     :finalBlow java.lang.Boolean
+     :securityStatus java.lang.Double
+     :damageDone java.lang.Integer})
 
 (defn item-type []
   {:id_str java.lang.String

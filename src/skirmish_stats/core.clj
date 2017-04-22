@@ -1,7 +1,6 @@
 (ns skirmish-stats.core
   (:require [skirmish-stats.killmail :as km]
             [skirmish-stats.db :as db]
-            [clojure.core.async :refer [<!!]]
             [clojure.walk :as walk]
             [compojure.core :refer [routes GET POST]]
             [compojure.route :as route]

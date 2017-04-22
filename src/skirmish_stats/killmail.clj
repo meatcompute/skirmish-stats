@@ -1,7 +1,7 @@
 (ns skirmish-stats.killmail
-  (:require [skirmish-stats.character :as c]
-            [skirmish-stats.attacker :as a]
-            [skirmish-stats.ship :as s]
+  (:require [skirmish-stats.character :as character]
+            [skirmish-stats.attacker :as attacker]
+            [skirmish-stats.ship :as ship]
             [clojure.core.async :refer [<!!]]
             [datomic.client :as d]
             [org.httpkit.client :as client]
@@ -42,10 +42,10 @@
    ::time java.lang.String
    ::damage-taken java.lang.Integer
    ::solar-system (solar-system-spec)
-   ::attackers [(a/spec)]
+   ::attackers [(attacker/spec)]
    ::items [(item-spec)]
-   ::character (c/spec)
-   ::shipType (s/spec)
+   ::character (character/spec)
+   ::ship-type (ship/spec)
    ::corporation (corporation-spec)
    ::position (position-spec)})
 
