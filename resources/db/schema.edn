@@ -31,16 +31,54 @@
   :db/doc "The solar system where the kill took place."}
 
  ;; Solar System
- {:db/ident :solar-system/href
-  :db/valueType :db.type/uri
-  :db/cardinality :db.cardinality/one}
-
  {:db/ident :solar-system/id
   :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity}
+
+ {:db/ident :solar-system/href
+  :db/valueType :db.type/uri
   :db/cardinality :db.cardinality/one}
 
  {:db/ident :solar-system/name
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
+ ;; Position
+ {:db/ident :position/x
+  :db/valueType :db.type/double
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :position/y
+  :db/valueType :db.type/double
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :position/z
+  :db/valueType :db.type/double
+  :db/cardinality :db.cardinality/one}
+
+ ;; Corporation
+ {:db/ident :corporation/id
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity}
+
+ {:db/ident :corporation/name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :corporation/href
+  :db/valueType :db.type/uri
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :corporation/icon
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/isComponent true}
+
+ ;; Icon
+ {:db/ident :icon/href
+  :db/valueType :db.type/uri
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity}
  ]

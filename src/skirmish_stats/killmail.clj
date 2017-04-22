@@ -23,25 +23,31 @@
    :solar-system/id java.lang.Integer
    :solar-system/name java.lang.String})
 
+(defn position-spec []
+  {:position/y java.lang.Double
+   :position/x java.lang.Double
+   :position/z java.lang.Double})
+
+(defn corporation-spec []
+  {:corporation/href java.lang.String
+   :corporation/id java.lang.Integer
+   :corporation/name java.lang.String
+   :corporation/icon {:href java.lang.String}})
+
 (defn spec
   "TODO Produce a clojure spec from this and use to parse and validate inbound data."
   []
   {::id java.lang.Integer
    ::attacker-count java.lang.Integer
-   ::kill-time java.lang.String
-   ::damageTaken java.lang.Integer
+   ::time java.lang.String
+   ::damage-taken java.lang.Integer
    ::solar-system (solar-system-spec)
    ::attackers [(a/spec)]
    ::items [(item-spec)]
    ::character (c/spec)
    ::shipType (s/spec)
-   ::corporation {:corporation/href java.lang.String
-                  :corporation/id java.lang.Integer
-                  :corporation/name java.lang.String
-                  :corporation/icon {:href java.lang.String}}
-   ::position {:position/y java.lang.Double
-               :position/x java.lang.Double
-               :position/z java.lang.Double}})
+   ::corporation (corporation-spec)
+   ::position (position-spec)})
 
 (defn generate-url
   "Returns a CREST URL to pull valid test data.
