@@ -26,13 +26,11 @@
      :type "url"
      :placeholder "http://example.com/"}]])
 
-(defn killmails-component
-  "FIXME Maybe pull instead of query?"
-  []
-  (let [kms (<!! (km/uris db/conn))]
+(defn killmails-component []
+  (let [kms (db/pull-many (db/get km/all-eids))]
     [:ul
      (for [km kms]
-       [:li (pr-str km)])]))
+       [:li (str km)])]))
 
 (defn index [ring-req]
   (hiccup/html
@@ -52,7 +50,7 @@
 (defn new-killmail [req]
   (let [url         (get-in req [:params :url])
         killmail    (km/parse url)
-        transaction (km/write db/conn killmail)]
+        transaction (km/write killmail)]
     (ring.util.response/redirect (get-in req [:headers "referer"]))))
 
 (defn ring-routes

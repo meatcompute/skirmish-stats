@@ -22,25 +22,11 @@
 
 (def all-uris
   '[:find ?uri
-    :where
-    [_ :killmail/uri ?uri]])
-
-(defn uris
-  [conn]
-  (d/q conn
-       {:query all-uris
-        :args [(d/db conn)]}))
+    :where [_ :killmail/uri ?uri]])
 
 (def all-eids
   '[:find ?e
-    :where
-    [?e :killmail/id]])
-
-(defn eids
-  [conn]
-  (d/q conn
-       {:query all-eids
-        :args [(d/db conn)]}))
+    :where [?e :killmail/id]])
 
 (defn scrape
   "GETs the contents of the url, FIXME should handle errors better"
@@ -70,10 +56,12 @@
   (let [id             (:killID killmail)
         attacker-count (:attackerCount killmail)
         time           (validate-time (:killTime killmail))
+        damage-taken   (get-in killmail [:victim :damageTaken])
         uri            (java.net.URI. url)]
     {:killmail/id id
      :killmail/attacker-count attacker-count
      :killmail/time time
+     :killmail/damage-taken damage-taken
      :killmail/uri uri}))
 
 (defn write
@@ -104,19 +92,18 @@
   {:killID java.lang.Integer
    :attackerCount java.lang.Integer
    :killTime java.lang.String
+   :damageTaken java.lang.Integer
    :solarSystem {:href java.lang.String
                  :id java.lang.Integer
                  :name java.lang.String}
    :attackers [(a/spec)]
-   :victim {:damageTaken java.lang.Integer
-            :items [(item-spec)]
-            :damageTaken_str java.lang.String
-            :character (c/spec)
-            :shipType (s/spec)
-            :corporation {:href java.lang.String
-                          :id java.lang.Integer
-                          :name java.lang.String
-                          :icon {:href java.lang.String}}
-            :position {:y java.lang.Double
-                       :x java.lang.Double
-                       :z java.lang.Double}}})
+   :items [(item-spec)]
+   :character (c/spec)
+   :shipType (s/spec)
+   :corporation {:href java.lang.String
+                 :id java.lang.Integer
+                 :name java.lang.String
+                 :icon {:href java.lang.String}}
+   :position {:y java.lang.Double
+              :x java.lang.Double
+              :z java.lang.Double}})

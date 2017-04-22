@@ -18,3 +18,16 @@
 
 (defn schema-load []
   (d/transact conn {:tx-data schema}))
+
+(defn get [query]
+  (let [chan (d/q conn {:query query
+                        :args [(d/db conn)]})
+        result (<!! chan)]
+    (cond
+      (vector? result) (flatten result)
+      true result)))
+
+(defn pull-many
+  [eids]
+  (map #(<!! (d/pull (d/db conn) {:selector '[*] :eid %}))
+       eids))

@@ -19,4 +19,8 @@
   :db/valueType :db.type/uri
   :db/cardinality :db.cardinality/one
   :db/doc "A killmail's CREST uri"}
+
+ {:db/ident :killmail/damage-taken
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
  ]
