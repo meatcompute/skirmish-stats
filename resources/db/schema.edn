@@ -27,13 +27,62 @@
   :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one}
 
- {:db/ident :fleet/pilot
+ {:db/ident :fleet/point-limit
+  :db/unique :db.unique/value
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :fleet/slot-limit
+  :db/unique :db.unique/value
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :fleet/slot
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/many}
 
- {:db/ident :fleet/ship
+ ;; Slot
+ {:db/ident :slot/id
+  :db/unique :db.unique/value
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one
+  :db/isComponent true}
+
+ {:db/ident :slot/pilot
   :db/valueType :db.type/ref
-  :db/cardinality :db.cardinality/many}
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :slot/ship
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one}
+
+ ;; Pilot
+ {:db/ident :pilot/id
+  :db/unique :db.unique/identity
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :pilot/name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ ;; Ship
+ {:db/ident :ship/id
+  :db/unique :db.unique/value
+  :db/type :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :ship/name
+  :db/type :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :ship/fit
+  :db/type :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :ship/points
+  :db/type :db.type/long
+  :db/cardinality :db.cardinality/one}
 
  ;; Killmail
  {:db/ident :killmail/id
