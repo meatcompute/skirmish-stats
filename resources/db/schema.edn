@@ -1,4 +1,40 @@
 [
+ ;; Match
+ {:db/ident :match/id
+  :db/unique :db.unique/value
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :match/time
+  :db/valueType :db.type/instant
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :match/opponent
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :match/pilots
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/many}
+
+ {:db/ident :match/fleet
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one}
+
+ ;; Fleet
+ {:db/ident :fleet/id
+  :db/unique :db.unique/value
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :fleet/pilot
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many}
+
+ {:db/ident :fleet/ship
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many}
+
  ;; Killmail
  {:db/ident :killmail/id
   :db/unique :db.unique/value
