@@ -34,7 +34,7 @@
 (defn index [ring-req]
   (hiccup/html
    [:head
-    [:title "Skirmish Stats"]
+    [:title "scrimmy"]
     [:meta {:charset "UTF-8"}]
     [:meta {:name "viewport"
             :content "width=device-width, initial-scale=1"}]
@@ -42,7 +42,7 @@
             :rel "stylesheet"
             :type "text/css"}]]
    [:body
-    [:h1 "Skirmish Stats"]
+    [:h1 "scrimmy"]
     (killmail-submit-form)
     (killmails-component)]))
 
@@ -91,4 +91,5 @@
            stop-fn)
   :stop (http))
 
-(mount.core/start)
+;; Execute this to start the server
+#_(mount.core/start)
