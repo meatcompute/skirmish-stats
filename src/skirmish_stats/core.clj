@@ -91,5 +91,6 @@
            stop-fn)
   :stop (http))
 
-;; Execute this to start the server
+;; REPL helpers :D
 #_(mount.core/start)
+#_(mount.core/stop)
