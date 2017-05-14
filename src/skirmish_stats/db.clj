@@ -32,3 +32,13 @@
   [eids]
   (map #(<!! (d/pull (d/db conn) {:selector '[*] :eid %}))
        eids))
+
+(defstate test-data
+  :start [{:match/opponent "Not spooky"
+           :match/pilot "Mayrin"}
+          {:match/opponent "Not spooky"
+           :match/pilot "Vordak"}
+          {:match/opponent "Not spooky"
+           :match/pilot "Tau"}
+          {:match/opponent "Not spooky"
+           :match/pilot "W4r"}])
