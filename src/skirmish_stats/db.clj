@@ -5,13 +5,13 @@
 
 (defstate conn
   :start (<!! (d/connect
-               {:db-name "hello"
+               {:db-name "skirmish-stats"
                 :account-id d/PRO_ACCOUNT
-                :secret "pihasfy83uhs"
+                :secret "mysecret"
                 :region "none"
                 :endpoint "localhost:8998"
                 :service "peer-server"
-                :access-key "ohiuygtfrdyfu32hjk32"})))
+                :access-key "myaccesskey"})))
 
 (defstate schema
   :start (slurp "resources/db/schema.edn"))
@@ -21,7 +21,9 @@
 
 (defn get [query]
   (let [chan (d/q conn {:query query :args [(d/db conn)]})
-        result (<!! chan)]
+        result (if-not (d/error? chan)
+                 (<!! chan)) ;; Might not be a channel.
+        ]
     (cond
       (vector? result) (flatten result)
       true result)))
