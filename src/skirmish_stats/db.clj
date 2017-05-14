@@ -22,8 +22,7 @@
 (defn get [query]
   (let [chan (d/q conn {:query query :args [(d/db conn)]})
         result (if-not (d/error? chan)
-                 (<!! chan)) ;; Might not be a channel.
-        ]
+                 (<!! chan))]
     (cond
       (vector? result) (flatten result)
       true result)))
@@ -42,3 +41,12 @@
            :match/pilot "Tau"}
           {:match/opponent "Not spooky"
            :match/pilot "W4r"}])
+
+(def all-match-pilots-q
+  '[:find ?e
+    :where [?e :match/pilot]])
+
+(defn pull-all-match-pilots []
+  (-> all-match-pilots-q
+      get
+      pull-many))
