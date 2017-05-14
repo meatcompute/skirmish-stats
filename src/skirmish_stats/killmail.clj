@@ -1,8 +1,5 @@
 (ns skirmish-stats.killmail
-  (:require [skirmish-stats.character :as character]
-            [skirmish-stats.attacker :as attacker]
-            [skirmish-stats.ship :as ship]
-            [clojure.core.async :refer [<!!]]
+  (:require [clojure.core.async :refer [<!!]]
             [datomic.client :as d]
             [org.httpkit.client :as client]
             [cheshire.core :as cheshire]
@@ -34,7 +31,7 @@
    :corporation/name java.lang.String
    :corporation/icon {:href java.lang.String}})
 
-(defn spec
+#_(defn spec
   "TODO Produce a clojure spec from this and use to parse and validate inbound data."
   []
   {::id java.lang.Integer
