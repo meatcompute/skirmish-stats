@@ -1,19 +1,18 @@
 [
  ;; Match
- {:db/ident :match/id
-  :db/unique :db.unique/value
-  :db/valueType :db.type/long
-  :db/cardinality :db.cardinality/one}
-
  {:db/ident :match/time
   :db/valueType :db.type/instant
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :match/team
+  :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
  {:db/ident :match/opponent
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
- {:db/ident :match/pilots
+ {:db/ident :match/pilot
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/many}
 
@@ -22,9 +21,9 @@
   :db/cardinality :db.cardinality/one}
 
  ;; Fleet
- {:db/ident :fleet/id
+ {:db/ident :fleet/name
   :db/unique :db.unique/value
-  :db/valueType :db.type/long
+  :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
  {:db/ident :fleet/point-limit
@@ -39,14 +38,14 @@
 
  {:db/ident :fleet/slot
   :db/valueType :db.type/ref
-  :db/cardinality :db.cardinality/many}
+  :db/cardinality :db.cardinality/many
+  :db/isComponent true}
 
  ;; Slot
  {:db/ident :slot/id
   :db/unique :db.unique/value
   :db/valueType :db.type/long
-  :db/cardinality :db.cardinality/one
-  :db/isComponent true}
+  :db/cardinality :db.cardinality/one}
 
  {:db/ident :slot/pilot
   :db/valueType :db.type/ref
@@ -69,19 +68,19 @@
  ;; Ship
  {:db/ident :ship/id
   :db/unique :db.unique/value
-  :db/type :db.type/long
+  :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one}
 
  {:db/ident :ship/name
-  :db/type :db.type/string
+  :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
  {:db/ident :ship/fit
-  :db/type :db.type/string
+  :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
  {:db/ident :ship/points
-  :db/type :db.type/long
+  :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one}
 
  ;; Killmail
